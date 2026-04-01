@@ -11,6 +11,7 @@ A comprehensive Python tool for discovering, aggregating, and exporting academic
 - **Smart Deduplication**: Automatic duplicate removal based on DOI and title matching  
 - **Interactive CLI**: User-friendly prompts or command-line arguments
 - **Excel Export**: Clean, structured output with comprehensive metadata
+- **📥 Auto Paper Download**: Download research papers directly with organized file storage
 - **PDF Extraction**: Extract titles and generate citation placeholders from local PDFs
 - **Modular Design**: Clean package structure for easy extension
 
@@ -69,11 +70,11 @@ python -m scholarly.cli
 
 **Command-Line Arguments:**
 ```bash
-# Basic search
-python -m scholarly.cli -q "deep learning" -n 75 -o deep_learning.xlsx
+# Search for papers
+python -m scholarly.cli search -q "deep learning" -n 75 -o deep_learning.xlsx
 
 # Specific research area
-python -m scholarly.cli -q "quantum computing applications" -n 200 -o quantum_research.xlsx
+python -m scholarly.cli search -q "quantum computing applications" -n 200 -o quantum_research.xlsx
 ```
 
 **Available Flags:**
@@ -82,6 +83,63 @@ python -m scholarly.cli -q "quantum computing applications" -n 200 -o quantum_re
 | `-q, --query` | Research topic/keywords | *Required* |
 | `-n, --num-results` | Results per source | 50 |
 | `-o, --out` | Output filename | papers_all_sources.xlsx |
+
+### 📥 Download Research Papers
+
+After searching for papers, automatically download PDFs and organize them locally:
+
+**Using Standalone Script (Recommended):**
+```bash
+# Download all papers from Excel file
+python download_papers.py search_results.xlsx
+
+# Download to custom folder
+python download_papers.py search_results.xlsx --dir my_research_papers
+
+# Download with limit and save download status
+python download_papers.py search_results.xlsx --max 20 --update-excel
+```
+
+**Using CLI:**
+```bash
+# Download papers via CLI
+python -m scholarly.cli download -f search_results.xlsx
+
+# Custom folder and limits
+python -m scholarly.cli download -f search_results.xlsx --dir papers_archive --max 30 --update-excel
+```
+
+**Download Flags:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `-f, --file` | Excel file with paper data | *Required* |
+| `-d, --dir` | Download directory | `papers` |
+| `-m, --max` | Maximum papers to download | All |
+| `--update-excel` | Save updated Excel with status | False |
+
+**Features:**
+- ✅ Automatic folder creation (`papers/` by default)
+- ✅ Smart filename generation from paper titles
+- ✅ Duplicate detection - skips already downloaded papers
+- ✅ Handles arXiv, CrossRef, and direct PDF links
+- ✅ Retry mechanism for failed downloads
+- ✅ Progress tracking and detailed statistics
+- ✅ Optional Excel status tracking
+
+**Example Workflow:**
+```bash
+# 1. Search for papers
+python -m scholarly.cli search -q "machine learning" -n 50 -o ml_papers.xlsx
+
+# 2. Download papers to 'papers' folder
+python download_papers.py ml_papers.xlsx
+
+# 3. All papers saved to papers/ folder with organized names
+# papers/
+# ├── A survey of deep learning methods.pdf
+# ├── Neural networks and learning systems.pdf
+# └── ...
+```
 
 ### Local PDF Processing
 
